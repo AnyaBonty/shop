@@ -11,7 +11,7 @@ router=APIRouter(prefix="/user", tags=["/v1/user"])
 db_session=Annotated[AsyncSession, Depends(get_db)]
 
 
-@router.post("/create",
+@router.post("/",
              response_model=UserRead,
              status_code=status.HTTP_201_CREATED,
              summary="Создать нового пользователя")
@@ -39,7 +39,7 @@ async def get_user_endpoint(user_id:int,db: db_session):
                             detail='Пользователя с этим id не существует')
     return read_user
 
-@router.get('/',
+@router.get('/all',
             response_model=list[UserRead],
             status_code=status.HTTP_200_OK,
             summary='Получение списка пользователей')
@@ -52,7 +52,16 @@ async def get_users_endpoint(db: db_session, skip: int = 0, limit: int = 100):
             status_code=status.HTTP_200_OK,
             summary='Изменение информации пользователя по id')
 async def update_user_endpoint(db: db_session,user_id:int,updated_user:UserUpdate):
-    await get_user_endpoint(user_id,db)
+    read_user = await get_user(db, user_id)  # Проверка наличия пользователя с данным id
+    email_user=await get_user_by_email(db,updated_user.email) # Проверка наличия пользователя с данным email (сам пользователь не учитывается)
+    phone_user=await get_user_by_phone(db,updated_user.phone) # Проверка наличия пользователя с данным телефоном (сам пользователь не учитывается)
+    if (email_user and email_user.id!=user_id) or (phone_user and phone_user.id!=user_id):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail='Пользователь с таким телефоном или email уже существует')
+
+    if read_user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='Пользователя с этим id не существует')
     user=await update_user(db,user_id,updated_user)
     return user
 

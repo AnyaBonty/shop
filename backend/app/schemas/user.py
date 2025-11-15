@@ -5,14 +5,14 @@ class UserBase(BaseModel):
     phone: str
 
 class UserCreate(UserBase):
-    password: str
+    hashed_password: str
 
 class UserRead(UserBase):
     id: int
     is_admin: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserUpdate(UserBase):
-    password: str
+    hashed_password: str

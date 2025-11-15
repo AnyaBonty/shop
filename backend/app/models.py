@@ -1,5 +1,5 @@
 from __future__ import annotations #откладывать создание аннотации типов нужно откладывать
-from sqlalchemy import Integer, String, Boolean, Float, ForeignKey, DateTime
+from sqlalchemy import Integer, String, Boolean, Float, ForeignKey,TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 
@@ -8,10 +8,12 @@ from backend.app.db.base import Base
 class User(Base):
     __tablename__ = 'users'
     id: Mapped[int] = mapped_column(Integer,primary_key=True)
-    email: Mapped[str| None] = mapped_column(String(70), unique=True, index=True)
-    phone: Mapped[str] = mapped_column(String(15), unique=True, index=True)
+    email: Mapped[str| None] = mapped_column(String(70), unique=True, index=True, nullable=True)
+    phone: Mapped[str] = mapped_column(String(15), unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    orders: Mapped['Order'] = relationship(back_populates='users', cascade='all, delete-orphan')
 
 class Product(Base):
     __tablename__ = "products"
@@ -30,9 +32,11 @@ class Order(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=datetime.utcnow)
+    price: Mapped[float] = mapped_column(Float, default=0)
 
     items: Mapped[list["OrderItem"]]=relationship(back_populates='order', cascade="all, delete-orphan")
+    users: Mapped['User']=relationship(back_populates='orders')
 
 
 class OrderItem(Base):
@@ -41,6 +45,7 @@ class OrderItem(Base):
     order_id: Mapped[int] = mapped_column(ForeignKey("orders.id"))
     product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
     quantity: Mapped[int] = mapped_column(Integer, default=1)
+    price: Mapped[float] = mapped_column(Float, default=0, nullable=True)
 
     order: Mapped[Order] = relationship(back_populates='items')
     product: Mapped[Product] = relationship(back_populates='order_items')

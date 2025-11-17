@@ -15,5 +15,6 @@ class ProductUpdate(ProductBase):
 class ProductRead(ProductBase):
     id: int
 
+
     class Config:
         from_attributes = True

@@ -20,7 +20,7 @@ async def create_product(db:AsyncSession, product:ProductCreate):
     db.add(new_item)
     await db.commit()
     await db.refresh(new_item)
-    return new_item
+    return ProductRead.model_validate(new_item)
 
 async def delete_product(db:AsyncSession, id:int):
     product=await get_product_by_id(db, id)

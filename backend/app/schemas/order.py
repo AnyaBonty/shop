@@ -6,7 +6,7 @@ from .product import ProductRead
 class OrderItemBase(BaseModel):
     product_id: int
     quantity: int = 1
-
+    price: float |None = None
 class OrderItemRead(OrderItemBase):
     product: ProductRead
     class Config:
@@ -23,6 +23,7 @@ class OrderCreate(OrderBase):
 class OrderRead(OrderBase):
     id: int
     created_at: datetime
+    price: float |None = None
     items: list[OrderItemRead]
     class Config:
         from_attributes = True

@@ -27,6 +27,14 @@ async def create_user_endpoint(user:Annotated[UserCreate,Body(...,description='�
     created_user=await create_user(db,user)
     return created_user
 
+@router.get('/all',
+            response_model=list[UserRead],
+            status_code=status.HTTP_200_OK,
+            summary='Получение списка пользователей')
+async def get_users_endpoint(db: db_session, skip: int = 0, limit: int = 100):
+    result=await get_users(db,skip,limit)
+    return result
+
 
 @router.get("/{user_id}",
             response_model=UserRead,
@@ -39,13 +47,7 @@ async def get_user_endpoint(user_id:int,db: db_session):
                             detail='Пользователя с этим id не существует')
     return read_user
 
-@router.get('/all',
-            response_model=list[UserRead],
-            status_code=status.HTTP_200_OK,
-            summary='Получение списка пользователей')
-async def get_users_endpoint(db: db_session, skip: int = 0, limit: int = 100):
-    result=await get_users(db,skip,limit)
-    return result
+
 
 @router.put("/{user_id}",
             response_model=UserRead,

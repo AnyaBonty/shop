@@ -65,5 +65,5 @@ async def delete_user(db: AsyncSession, user_id: int):
     db.add(db_user)
     await db.commit()
     await db.refresh(db_user)
-    return db_user
+    return UserRead.model_validate(db_user)
 

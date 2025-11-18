@@ -41,10 +41,9 @@ async def delete_role_by_id(db:AsyncSession, id:int):
     result=role.scalar_one_or_none()
     if result is None:
         return None
-    await db.delete(role)
+    await db.delete(result)
     await db.commit()
-    await db.refresh(role)
-    return RoleRead.model_validate(role)
+    return RoleRead.model_validate(result)
 
 async def update_role_by_id(db:AsyncSession, id:int,update_role:RoleUpdate):
     role_search = await db.execute(select(Role).where(Role.id == id))

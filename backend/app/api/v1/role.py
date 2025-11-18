@@ -57,7 +57,7 @@ async def post_role_by_id_endpoint( db:db_session,new_role:RoleBase):
                             detail='Такая роль уже существует')
     return role
 
-'''
+
 @router.delete("/",
                status_code=status.HTTP_202_ACCEPTED,
                response_model=RoleRead,
@@ -68,5 +68,3 @@ async def delete_role_by_id_endpoint( db:db_session,id:int):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail='Не найден роль с данным id')
     return role
-
-'''

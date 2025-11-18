@@ -15,7 +15,11 @@ class User(Base):
     phone: Mapped[str] = mapped_column(String(15), unique=True, index=True, nullable=True)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    role_id: Mapped[int] = mapped_column(ForeignKey('roles.id'), nullable=True,default=1)
+    role_id: Mapped[int] = mapped_column(ForeignKey('roles.id',ondelete='SET DEFAULT'),
+                                         nullable=True,
+                                         default=1,
+                                         server_default='1',
+                                         )
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=datetime.now(timezone.utc))

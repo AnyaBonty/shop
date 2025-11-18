@@ -67,3 +67,13 @@ async def update_user_endpoint(db: db_session,user_id:int,updated_user:UserUpdat
     user=await update_user(db,user_id,updated_user)
     return user
 
+@router.delete("/",
+               response_model=UserRead,
+                status_code=status.HTTP_200_OK,
+               summary='Удалить пользователя по id')
+async def delete_user_endpoint(db: db_session,user_id:int):
+    user=await delete_user(db,user_id)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='Пользователя с этим id не существует')
+    return user

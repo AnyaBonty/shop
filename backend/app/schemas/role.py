@@ -16,9 +16,12 @@ class RoleUpdate(BaseModel):
     name: str|None= None
     description: str|None = None
 
-class RoleReadFull(RoleBase):
+class RoleReadFullUsers(RoleBase):
     id: int
     users:list[UserRead]
     class Config:
         from_attributes = True
 
+
+class RolesRead(BaseModel):
+    roles: list[RoleRead]

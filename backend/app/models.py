@@ -15,13 +15,14 @@ class User(Base):
     phone: Mapped[str] = mapped_column(String(15), unique=True, index=True, nullable=True)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    role_id: Mapped[int] = mapped_column(ForeignKey('roles.id'), nullable=False,default=1)
+    role_id: Mapped[int] = mapped_column(ForeignKey('roles.id'), nullable=True,default=1)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=datetime.now(timezone.utc))
 
     orders: Mapped[list['Order']] = relationship(back_populates='users', cascade='all, delete-orphan')
     role: Mapped['Role'] = relationship(back_populates='users')
+
 
 class Role(Base):
     __tablename__ = 'roles'
@@ -66,3 +67,4 @@ class OrderItem(Base):
 
     order: Mapped[Order] = relationship(back_populates='items')
     product: Mapped[Product] = relationship(back_populates='order_items')
+

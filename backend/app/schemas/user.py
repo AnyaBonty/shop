@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 from datetime import datetime
 
 class UserBase(BaseModel):
@@ -10,7 +10,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str
+    password: constr(min_length=6, max_length=50)
 
 class UserRead(UserBase):
     id: int
@@ -25,3 +25,7 @@ class UserUpdate(UserBase):
 
 class UsersRead(BaseModel):
     users: list[UserRead]
+
+class UserLogin(BaseModel):
+    email: str
+    password: constr(min_length=6, max_length=50)

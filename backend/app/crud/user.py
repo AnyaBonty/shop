@@ -6,6 +6,7 @@ from datetime import datetime,timezone
 
 from backend.app.schemas.user import UserRead, UserCreate, UserUpdate, UsersRead
 from backend.app.models import User
+from backend.app.core.security import *
 
 
 async def get_user(db: AsyncSession, user_id:int):
@@ -17,7 +18,7 @@ async def get_user_by_phone(db: AsyncSession, phone: str):
     return result.scalar_one_or_none()
 
 async def get_user_by_email(db: AsyncSession, email: str):
-    result = await db.execute(select(User).where(User.email == email))
+    result = await db.execute(select(User).options(User.role).where(User.email == email))
     return result.scalar_one_or_none()
 
 
@@ -31,7 +32,8 @@ async def get_users(db: AsyncSession, skip: int = 0, limit: int = 100):
 
 
 async def create_user(db: AsyncSession, user: UserCreate):
-    db_user = User(email=user.email,phone=user.phone,hashed_password=user.password,
+    hashed_password = hash_password(user.password)
+    db_user = User(email=user.email,phone=user.phone,hashed_password=hashed_password,
                    first_name=user.first_name,last_name=user.last_name,
                    created_at=datetime.now(timezone.utc),updated_at=datetime.now(timezone.utc))
     db.add(db_user)
@@ -46,7 +48,7 @@ async def update_user(db: AsyncSession,user_id:int, user: UserUpdate):
     if not db_user:
         return None
     db_user.email=user.email
-    db_user.hashed_password=user.password
+    db_user.hashed_password=hash_password(user.password)
     db_user.phone=user.phone
     db_user.first_name=user.first_name
     db_user.last_name=user.last_name

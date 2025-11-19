@@ -4,6 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import datetime,timezone
 
+from sqlalchemy.orm import selectinload
+
 from backend.app.schemas.user import UserRead, UserCreate, UserUpdate, UsersRead
 from backend.app.models import User
 from backend.app.core.security import *
@@ -18,7 +20,7 @@ async def get_user_by_phone(db: AsyncSession, phone: str):
     return result.scalar_one_or_none()
 
 async def get_user_by_email(db: AsyncSession, email: str):
-    result = await db.execute(select(User).options(User.role).where(User.email == email))
+    result = await db.execute(select(User).options(selectinload(User.role)).where(User.email == email))
     return result.scalar_one_or_none()
 
 

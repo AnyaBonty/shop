@@ -22,7 +22,7 @@ async def login(db:db_sesson, user: UserLogin):
 
     if not db_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="User not found")
+                            detail="Пользователь не найден")
     if not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='Некорректный пароль')

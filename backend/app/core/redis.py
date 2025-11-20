@@ -1,3 +1,4 @@
+from fastapi import HTTPException,status
 from redis.asyncio import Redis
 from backend.app.core.config import settings
 
@@ -15,4 +16,6 @@ async def check_token_in_redis(token: str):
     """Проверяем, что токен есть и активен"""
     value = await redis.get(token)
     if value is None:
-        raise Exception("Token is invalid or expired")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Токен не найден")
+

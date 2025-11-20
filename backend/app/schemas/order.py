@@ -6,7 +6,6 @@ from .product import ProductRead
 class OrderItemBase(BaseModel):
     product_id: int
     quantity: int = 1
-    price: float |None = None
 class OrderItemRead(OrderItemBase):
     product: ProductRead
     class Config:

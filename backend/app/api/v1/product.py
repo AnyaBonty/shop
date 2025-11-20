@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.db.session import get_db
 from backend.app.schemas.product import ProductRead
 from backend.app.crud.product import *
+from backend.app.api.v1.dependencies import require_roles
 
 router=APIRouter(prefix="/product", tags=["/v1/product"])
 
@@ -26,6 +27,7 @@ async def get_product_endpoint(db:db_session,product_id:int):
 @router.post('/',
              status_code=status.HTTP_201_CREATED,
              response_model=ProductRead,
+             dependencies=[Depends(require_roles('admin','customer'))],
              summary='Создание нового товара')
 async def create_product_endpoint(db:db_session,product:ProductCreate):
     read_product=await get_product_by_name(db,product.name)
@@ -46,3 +48,26 @@ async def get_product_by_name_endpoint(db:db_session,name:str):
                             detail='Нет таких продуктов')
     return product
 
+@router.put("/{product_id}",
+            status_code=status.HTTP_200_OK,
+            response_model=ProductRead,
+            dependencies=[Depends(require_roles('admin','customer'))],
+            summary='Изменение продукта по id')
+async def update_product_endpoint(db:db_session,product_id:int,product:ProductUpdate):
+    up_product=await update_product(db,product_id,product)
+    if not up_product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='Продукт не найден')
+    return ProductRead.model_validate(up_product)
+
+@router.delete("/{product_id}",
+               status_code=status.HTTP_200_OK,
+               response_model=ProductRead,
+               dependencies=[Depends(require_roles('admin','customer'))],
+               summary='Удаление продукта')
+async def delete_product_endpoint(db:db_session,product_id:int):
+    delete_product_from_db=await delete_product(db,product_id)
+    if not delete_product_from_db:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='Продукт не найден')
+    return ProductRead.model_validate(delete_product_from_db)

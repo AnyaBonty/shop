@@ -27,5 +27,5 @@ class UsersRead(BaseModel):
     users: list[UserRead]
 
 class UserLogin(BaseModel):
-    email: str
+    username: str
     password: constr(min_length=6, max_length=50)

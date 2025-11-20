@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends,status, HTTPException,Body
+from fastapi import APIRouter, Depends, status, HTTPException, Body, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Annotated
 
+from backend.app.api.v1.dependencies import get_current_user
 from backend.app.db.session import get_db
 from backend.app.schemas.user import UserCreate
 from backend.app.crud.user import *
+from fastapi.security import OAuth2PasswordBearer
 
 router=APIRouter(prefix="/user", tags=["/v1/user"])
 
@@ -26,6 +28,13 @@ async def create_user_endpoint(user:Annotated[UserCreate,Body(...,description='�
                             detail='Пользователь с таким телефоном или email уже существует')
     created_user=await create_user(db,user)
     return created_user
+
+@router.get("/me")
+async def read_me(authorization: str = Header(..., alias="Authorization")):
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid header")
+    token = authorization.split(" ")[1]
+    return {"token": token}
 
 @router.get('/all',
             response_model=list[UserRead],

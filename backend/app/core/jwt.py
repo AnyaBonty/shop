@@ -4,6 +4,7 @@ from jose import jwt, JWTError
 
 from backend.app.core.config import settings
 from datetime import datetime, timedelta,timezone
+from backend.app.core.redis import redis, add_token_to_redis, check_token_in_redis
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -12,12 +13,17 @@ refresh_token_expire_days = settings.REFRESH_TOKEN_EXPIRE_DAYS
 
 
 
-def create_access_token(data: dict):
+async def create_access_token(data: dict):
     to_encode = data.copy()
-    """Создаёт JWT access token (короткий срок). subject обычно user_id."""
+    """Создаёт JWT access token (короткий срок)."""
     expire = datetime.now(timezone.utc) + timedelta(minutes=access_token_expire_minutes)
     to_encode.update({"exp": expire})
     token= jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    # TTL в секундах
+    ttl = int((expire - datetime.now(timezone.utc)).total_seconds())
+    await add_token_to_redis(token,ttl)
+
     return token
 
 
@@ -37,8 +43,10 @@ def create_refresh_token(subject: str, role:str):
 '''
 
 
-def decode_access_token(token: str):
+async def decode_access_token(token: str):
     try:
+        await check_token_in_redis(token)
+
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError as e:
         raise e

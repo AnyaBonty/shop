@@ -98,3 +98,16 @@ async def delete_user_endpoint(db: db_session,user_id:int):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail='Пользователя с этим id не существует')
     return user
+
+
+@router.put('/{user_id}/{role_id}',
+            response_model=UserRead,
+            status_code=status.HTTP_200_OK,
+            dependencies=[Depends(require_roles('admin'))],
+            summary='Изменение роли пользователя')
+async def update_role_endpoint(db:db_session,user_id:int,role_id:int):
+    user=await update_user_role(db,user_id,role_id)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail='Пользователя с этим id не существует')
+    return user

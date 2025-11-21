@@ -6,6 +6,7 @@ from datetime import datetime,timezone
 
 from sqlalchemy.orm import selectinload
 
+from backend.app.schemas.role import RoleRead
 from backend.app.schemas.user import UserRead, UserCreate, UserUpdate, UsersRead
 from backend.app.models import User
 from backend.app.core.security import *
@@ -55,6 +56,7 @@ async def update_user(db: AsyncSession,user_id:int, user: UserUpdate):
     db_user.first_name=user.first_name
     db_user.last_name=user.last_name
     db_user.updated_at=datetime.now(timezone.utc)
+    db_user.role=user.role
     await db.commit()
     await db.refresh(db_user)
     return db_user
@@ -71,3 +73,15 @@ async def delete_user(db: AsyncSession, user_id: int):
     await db.refresh(db_user)
     return UserRead.model_validate(db_user)
 
+
+async def update_user_role(db: AsyncSession, user_id: int, role_id:int):
+    result = await db.execute(select(User).where(User.id == user_id))
+    db_user = result.scalar_one_or_none()
+    if not db_user:
+        return None
+    db_user.role_id=role_id
+
+    db.add(db_user)
+    await db.commit()
+    await db.refresh(db_user)
+    return UserRead.model_validate(db_user)

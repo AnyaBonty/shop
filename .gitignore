@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Env files
+.env
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Poetry
+poetry.lock
+
+# VSCode / PyCharm
+.vscode/
+.idea/

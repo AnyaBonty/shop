@@ -22,6 +22,7 @@ class UserRead(UserBase):
 
 class UserUpdate(UserBase):
     password: str | None
+    role_id: int | None
 
 class UsersRead(BaseModel):
     users: list[UserRead]

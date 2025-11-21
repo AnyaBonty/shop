@@ -40,13 +40,15 @@ docker compose up --build
 
 API доступен по адресу: http://localhost:8000
 Документация (Swagger): http://localhost:8000/docs
+```
 
 
 
 
-
-Вариант 2 — локально (для разработки)
-Bash# Устанавливаем зависимости
+### Вариант 2 — локально (для разработки)
+Bash
+```
+# Устанавливаем зависимости
 poetry install
 
 # Копируем .env
@@ -61,6 +63,6 @@ poetry run alembic upgrade head
 # Запускаем сервер
 poetry run uvicorn backend.app.main:app --reload
 → http://127.0.0.1:8000/docs
-
+```
 
 

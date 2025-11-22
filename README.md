@@ -30,8 +30,7 @@
 ### Вариант 1 — через Docker (рекомендуется)
 ```bash
 # Клонируем и заходим
-git clone [<репозиторий>](https://github.com/AnyaBonty/shop.git
-)
+git clone https://github.com/AnyaBonty/shop.git
 cd shop
 
 # Копируем .env

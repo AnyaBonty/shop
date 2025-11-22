@@ -10,7 +10,6 @@
 - SQLAlchemy 2.0 + Alembic
 - PostgreSQL
 - Redis (для хранения активных токенов)
-- Alembic
 - Poetry (управление зависимостями)
 - Docker + docker-compose
 

@@ -52,7 +52,7 @@ Bash
 poetry install
 
 # Копируем .env
-cp .env.example .env
+cp .env.example .env (требуется изменить данные под ваши бд)
 
 # Запускаем PostgreSQL и Redis через Docker
 docker compose up postgres redis -d

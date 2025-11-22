@@ -60,8 +60,7 @@ docker compose up postgres redis -d
 # Применяем миграции
 poetry run alembic upgrade head
 
-#запусквем PostgreSQL , создаем базу данных
-#запускам Redis 
+#запусквем PostgreSQL , создаем базу данных и запускам Redis ( если без докера)
 
 # Запускаем сервер
 poetry run uvicorn backend.app.main:app --reload
